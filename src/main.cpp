@@ -74,10 +74,6 @@ void setup() {
   // Serial.println(" Done.");
 }
 
-void setup1() {
-  delay(5000);
-}
-
 void printLinkStatus() {
   Serial.print("Controller: ");
 
@@ -105,6 +101,7 @@ bool networkConnected() {
 
 void loop() {
   if (networkConnected()) {
+    Ethernet.maintain();
     if (!client.connected()) {
       Serial.print("Starting APRS-IS Client.. ");
       bool connected = client.connect(APRS_IS_SERVER, APRS_IS_PORT, APRS_IS_FILTER);
@@ -133,13 +130,4 @@ void loop() {
     }
     printLinkStatus();
   }
-}
-
-void loop1() {
-
-  while(networkConnected()) {
-    Ethernet.maintain();
-  }
-  Serial.println("Network disconnected");
-  delay(1000);
 }

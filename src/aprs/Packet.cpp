@@ -24,12 +24,22 @@ SOFTWARE.
 
 namespace aprs {
     void _parse(Packet &packet, const String &s) {
+        if (packet.data != NULL) delete packet.data;
         switch(packet.data_type) {
             case '!':
-
+                packet.data = new PositionReport(false, s);
+                break;
+            case '=':
+                packet.data = new PositionReport(true, s);
+                break;
+            case '/':
+                packet.data = new PositionReportWithTimestamp(false, s);
+                break;
+            case '@':
+                packet.data = new PositionReportWithTimestamp(true, s);
                 break;
             default:
-                packet.data = s;
+                packet.data = new Data(s);
                 break;
         }
     }
@@ -106,12 +116,12 @@ namespace aprs {
     }
 
     String Packet::encode() const {
-        return data_type + data.encode();
+        return data_type + (data == NULL ? String() : data->encode());
     }
 
     size_t Packet::printTo(Print& p) const {
         return 
             p.print("Type: ") + p.print(dataTypeName()) +
-            p.print(data);
+            (data == NULL ? 0 : (p.print(", ") + data->printTo(p)));
     }
 }

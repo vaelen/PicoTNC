@@ -30,16 +30,14 @@ namespace aprs {
     class Packet : public Printable {
         public:
             char data_type;
-            Data data;
+            Data *data;
 
             // Default to an empty, user-defined packet
-            Packet(): data_type('{'), data() {};
+            Packet(): data_type('{'), data(NULL) {}
+            ~Packet() { if (data != NULL) delete data; }
 
             // A packet with only a data type
-            Packet(const char data_type): data_type(data_type), data() {};
-
-            // A packet with a data type and some data
-            Packet(const char data_type, const Data data): data_type(data_type), data(data) {};
+            Packet(const char data_type): data_type(data_type), data(NULL) {};
 
             // Human readable data type name
             String dataTypeName() const;

@@ -26,16 +26,64 @@ SOFTWARE.
 #include <Arduino.h>
 
 namespace aprs {
+    // Ambiguous (Big Question mark)
+    const String DEFAULT_SYMBOL = "\\.";
+
+    const char PADDING_CHAR = '.';
+    String pad(const String &s, size_t length);
+
     class Data: public Printable {
         public:
+        String raw_data;
+
         Data(): raw_data() {};
         Data(const String s): raw_data(s) {};
 
         virtual String encode() const;
-        virtual size_t printTo(Print& p) const;
+        virtual size_t printTo(Print& p) const;       
+    };
 
-        private:
-        String raw_data;
+    /*
+    Examples:
+    !4903.50N/07201.75W-Test 001234 no timestamp, no APRS messaging, with comment.
+    !4903.50N/07201.75W-Test /A=001234 no timestamp, no APRS messaging, altitude = 1234 ft.
+    !49VV.VVN/072VV.VVW- no timestamp, no APRS messaging, location to nearest degree.
+    */
+    class PositionReport: public Data {
+        public:
+        bool messaging;
+        String latitude;
+        String longitude;
+        String symbol;
+        String comment;
+
+        PositionReport(): 
+            messaging(false), latitude(), longitude(), symbol(DEFAULT_SYMBOL), comment() {};
+        PositionReport(bool messaging): 
+            messaging(messaging), latitude(), longitude(), symbol(DEFAULT_SYMBOL), comment() {};
+        PositionReport(bool messaging, const String s);
+
+        virtual String encode() const;
+        virtual size_t printTo(Print& p) const;
+    };
+
+        /*
+    Examples:
+    /092345z4903.50N/07201.75W>Test1234 with timestamp, no APRS messaging, zulu time, with comment.
+    @092345/4903.50N/07201.75W>Test1234 with timestamp, with APRS messaging, local time, with comment.
+    */
+    class PositionReportWithTimestamp: public PositionReport {
+        public:
+        String timestamp;
+
+        PositionReportWithTimestamp(): 
+            PositionReport(), timestamp() {};
+        PositionReportWithTimestamp(bool messaging): 
+            PositionReport(messaging), timestamp() {};
+        PositionReportWithTimestamp(bool messaging, const String s);
+
+        virtual String encode() const;
+        virtual size_t printTo(Print& p) const;
     };
 }
 
