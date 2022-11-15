@@ -26,7 +26,6 @@ SOFTWARE.
 
 #include <Arduino.h>
 #include <NetworkClient.h>
-#include <EthernetClient.h>
 
 class APRS_IS {
 public:
