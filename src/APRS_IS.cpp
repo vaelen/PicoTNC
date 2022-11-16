@@ -39,7 +39,7 @@ bool APRS_IS::connect(const String &server, const int port, const String &filter
 bool APRS_IS::_connect(const String &server, const int port, const String &login) {
 	if(!client.connect(server.c_str(), port))
 	{
-		Serial.printf("Could not connect to APRS-IS Server: %s:%d\n", server.c_str(), port);
+		//console.printf("Could not connect to APRS-IS Server: %s:%d\n", server.c_str(), port);
 		return false;
 	}
 	sendMessage(login);
@@ -54,7 +54,7 @@ bool APRS_IS::_connect(const String &server, const int port, const String &login
 			}
 			else
 			{
-				Serial.printf("Invalid callsign or passcode. Callsign: %s, Passcode: %s\n", callsign.c_str(), passcode.c_str());
+				//console.printf("Invalid callsign or passcode. Callsign: %s, Passcode: %s\n", callsign.c_str(), passcode.c_str());
 				return false;
 			}
 		}

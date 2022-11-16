@@ -35,6 +35,9 @@ SOFTWARE.
 
 #include <LiquidCrystal_PCF8574.h>
 
+const pin_size_t PIN_CONSOLE_TX = 6;
+const pin_size_t PIN_CONSOLE_RX = 7;
+
 const pin_size_t PIN_ETH_RST = 20;
 const pin_size_t PIN_ETH_INT = 21;
 const pin_size_t PIN_SDA = 8;
@@ -64,125 +67,131 @@ TinyGPSPlus gps;
 
 LiquidCrystal_PCF8574 lcd(LCD_ADDR);
 
+// Serial ports
+SerialPIO console(PIN_CONSOLE_TX, PIN_CONSOLE_RX);
+SerialUART &gpsSerial = Serial1;
+SerialUART &tncSerial = Serial2;
+
 void setup() {
-  Serial.begin(9600); // Console
-  Serial1.begin(9600); // GPS
+  console.begin(9600); // Console
+  gpsSerial.begin(9600); // GPS
+  tncSerial.begin(38400); // KISS TNC
 
   delay(3000);
 
-  Serial.println("Starting...");
+  console.println("Starting...");
 
-  Serial.print("Initializing I2C.. ");
+  console.print("Initializing I2C.. ");
   Wire.setSDA(PIN_SDA);
   Wire.setSCL(PIN_SCL);
   Wire.begin();
-  Serial.println(" Done.");
+  console.println(" Done.");
 
-  Serial.print("Initializing LCD.. ");
+  console.print("Initializing LCD.. ");
   lcd.begin(LCD_COLS, LCD_ROWS);
   lcd.setBacklight(128);
   lcd.home();
   lcd.clear();
   lcd.print("Loading...");
-  Serial.println(" Done.");
+  console.println(" Done.");
  
-  Serial.print("Initializing SPI.. ");
+  console.print("Initializing SPI.. ");
   SPI.begin(false);
-  Serial.println(" Done.");
+  console.println(" Done.");
  
-  Serial.print("Initializing Ethernet Pins.. ");
+  console.print("Initializing Ethernet Pins.. ");
   pinMode(PIN_ETH_RST, OUTPUT);
   digitalWrite(PIN_ETH_RST, HIGH);
   pinMode(PIN_ETH_INT, INPUT);
-  Serial.println(" Done.");
+  console.println(" Done.");
 
-  Serial.print("Initializing Ethernet.. ");
+  console.print("Initializing Ethernet.. ");
   Ethernet.init(PIN_SPI0_SS);
   Ethernet.begin(mac, emptyIP);
-  Serial.println(" Done.");
+  console.println(" Done.");
 
-  // Serial.print("Starting NTP Client.. ");
+  // console.print("Starting NTP Client.. ");
   // NTP.begin("pool.ntp.org", "time.nist.gov");
-  // Serial.println(" Done.");
+  // console.println(" Done.");
 }
 
 void printLinkStatus() {
-  Serial.print("Controller: ");
+  console.print("Controller: ");
 
   switch (Ethernet.hardwareStatus()) {
-    case EthernetNoHardware: Serial.print("None"); break;
-    case EthernetW5100: Serial.print("W5100"); break;
-    case EthernetW5200: Serial.print("W5200"); break;
-    default: Serial.print("W5500"); break;
+    case EthernetNoHardware: console.print("None"); break;
+    case EthernetW5100: console.print("W5100"); break;
+    case EthernetW5200: console.print("W5200"); break;
+    default: console.print("W5500"); break;
   }
 
-  Serial.print(", Link: ");
+  console.print(", Link: ");
   switch (Ethernet.linkStatus()) {
-    case LinkON: Serial.print("On"); break;
-    case LinkOFF: Serial.print("Off"); break;
-    default: Serial.print("Unknown"); break;
+    case LINK_ON: console.print("On"); break;
+    case LINK_OFF: console.print("Off"); break;
+    default: console.print("Unknown"); break;
   }
 
-  Serial.print(", IP: ");
-  Serial.println(Ethernet.localIP());
+  console.print(", IP: ");
+  console.println(Ethernet.localIP());
 }
 
 bool networkConnected() {
-  return Ethernet.linkStatus() == LinkON && Ethernet.localIP() != IPAddress(emptyIP);
+  return Ethernet.localIP() != IPAddress(emptyIP);
 }
 
 void gpsInfo()
 {
-  Serial.print(F("Satellites: "));
-  Serial.print(gps.satellites.value());
-  Serial.print(F("  "));
-  Serial.print(F("Location: ")); 
+  console.print(F("Satellites: "));
+  console.print(gps.satellites.value());
+  console.print(F("  "));
+  console.print(F("Location: ")); 
   if (gps.location.isValid())
   {
-    Serial.print(gps.location.lat(), 6);
-    Serial.print(F(","));
-    Serial.print(gps.location.lng(), 6);
+    console.print(gps.location.lat(), 6);
+    console.print(F(","));
+    console.print(gps.location.lng(), 6);
   }
   else
   {
-    Serial.print(F("INVALID"));
+    console.print(F("INVALID"));
   }
 
-  Serial.print(F("  Date/Time: "));
+  console.print(F("  Date/Time: "));
   if (gps.date.isValid())
   {
-    Serial.print(gps.date.month());
-    Serial.print(F("/"));
-    Serial.print(gps.date.day());
-    Serial.print(F("/"));
-    Serial.print(gps.date.year());
+    console.print(gps.date.month());
+    console.print(F("/"));
+    console.print(gps.date.day());
+    console.print(F("/"));
+    console.print(gps.date.year());
   }
   else
   {
-    Serial.print(F("INVALID"));
+    console.print(F("INVALID"));
   }
 
-  Serial.print(F(" "));
+  console.print(F(" "));
   if (gps.time.isValid())
   {
-    if (gps.time.hour() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.hour());
-    Serial.print(F(":"));
-    if (gps.time.minute() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.minute());
-    Serial.print(F(":"));
-    if (gps.time.second() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.second());
-    Serial.print(F("."));
-    if (gps.time.centisecond() < 10) Serial.print(F("0"));
-    Serial.print(gps.time.centisecond());
+    if (gps.time.hour() < 10) console.print(F("0"));
+    console.print(gps.time.hour());
+    console.print(F(":"));
+    if (gps.time.minute() < 10) console.print(F("0"));
+    console.print(gps.time.minute());
+    console.print(F(":"));
+    if (gps.time.second() < 10) console.print(F("0"));
+    console.print(gps.time.second());
+    console.print(F("."));
+    if (gps.time.centisecond() < 10) console.print(F("0"));
+    console.print(gps.time.centisecond());
   }
   else
   {
-    Serial.print(F("INVALID"));
+    console.print(F("INVALID"));
   }
 
-  Serial.println();
+  console.println();
 }
 
 void updateLcd() {
@@ -193,10 +202,10 @@ unsigned long lastMillis = 0;
 
 void loop() {
   // Update GPS
-  while (Serial1.available()) {
-    int c = Serial1.read();
+  while (gpsSerial.available()) {
+    int c = gpsSerial.read();
     gps.encode(c);
-    //Serial.write(c);
+    //console.write(c);
   }
 
   // Display GPS info
@@ -206,47 +215,63 @@ void loop() {
     lastMillis = m;
   }
 
+  // Check TNC
+  if (tncSerial.available()) {
+    console.print("KISS: ");
+    while (tncSerial.available()) {
+      int c = tncSerial.read();
+      if (c < 0x20 || c > 0x7e ) {
+        console.print("<0x");
+        console.print(c, 16);
+        console.print(">");
+      } else {
+        console.print((char)c);
+      }
+    }
+    console.print("\r\n");
+  }
+
   // Check for network connection
   if (networkConnected()) {
     Ethernet.maintain();
     // Check for APRS-IS connection
     if (!client.connected()) {
-      Serial.print("Starting APRS-IS Client.. ");
+      console.print("Starting APRS-IS Client.. ");
       bool connected = client.connect(APRS_IS_SERVER, APRS_IS_PORT, APRS_IS_FILTER);
-      Serial.println(connected ? " Done." : "Failed.");
+      console.println(connected ? " Done." : "Failed.");
     } else {
       // Network and APRS-IS client connected
       if (client.connected() && client.available()) {
         String message = client.getMessage();
         if (message.startsWith("#")) {
           // Comment
-          Serial.println(message);
+          console.println(message);
         } else {
           // Packet
           tnc2::Packet packet(message);
-          Serial.println(packet);
+          console.println(packet);
         }
       }
     }
   } else {
-    Serial.print("Obtaining IP Address.. ");
+    console.print("Obtaining IP Address.. ");
     int ethStatus = Ethernet.begin(mac);
-    Serial.println(ethStatus == 1 ? " Done." : "Failed.");
+    console.println(ethStatus == 1 ? " Done." : "Failed.");
     if (ethStatus == 0) {
-      Serial.print("Using Default IP Address.. ");
+      console.print("Using Default IP Address.. ");
       Ethernet.begin(mac, ip);
-      Serial.println(" Done.");
+      console.println(" Done.");
     }
     printLinkStatus();
   }
 }
 
-void setup2() {
-  Serial2.begin(9600); // KISS TNC
-}
+// void setup2() {
+//   tncSerial.begin(38400); // KISS TNC
+// }
 
-void loop2() {
-  while (Serial2.available() > 0) {
-    Serial.write(Serial2.read());
-  }
-}
+// void loop2() {
+//   while (tncSerial.available() > 0) {
+//     console.write(tncSerial.read());
+//   }
+// }
