@@ -20,6 +20,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
+#include <pins.h>
+#include <console.h>
 
-#include <tnc2/Packet.h>
+SerialPIO console(PIN_CONSOLE_TX, PIN_CONSOLE_RX);
+
+void initConsole() {
+    console.begin(38400); // Console
+}

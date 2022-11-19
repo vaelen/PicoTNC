@@ -20,6 +20,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
+#include <config.h>
 
-#include <tnc2/Packet.h>
+bool debugGPS() { return false; }
+bool isGPSEnabled() { return false; }
+
+bool debugEth() { return false; }
+bool isEthEnabled() { return false; }
+
+bool debugWifi() { return false; }
+bool isWifiEnabled() { return false; }
+
+bool isI2CEnabled() { return false; }

@@ -20,8 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef aprs_packet_h_
-#define aprs_packet_h_
+#pragma once
 
 #include <Arduino.h>
 #include "Data.h"
@@ -52,5 +51,3 @@ namespace aprs {
     //  Parse a packet from a raw APRS data string
     Packet parse(const String s);
 };
-
-#endif

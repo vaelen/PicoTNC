@@ -22,4 +22,33 @@ SOFTWARE.
 
 #pragma once
 
-#include <tnc2/Packet.h>
+#include <api/Common.h>
+#include <pins_arduino.h>
+
+// Serial / GPS
+#define PIN_GPS_TX      (0u)
+#define PIN_GPS_RX      (1u)
+
+// Serial / KISS
+#define PIN_KISS_TX     (0u)
+#define PIN_KISS_RX     (1u)
+
+// Serial / Console
+#define PIN_CONSOLE_TX  (2u)
+#define PIN_CONSOLE_RX  (3u)
+
+// SPI / Ethernet
+#define PIN_ETH_MISO    (16u)
+#define PIN_ETH_MOSI    (19u)
+#define PIN_ETH_SCK     (18u)
+#define PIN_ETH_SS      (17u)
+#define PIN_ETH_RST     (20u)
+#define PIN_ETH_INT     (21u)
+
+// I2C
+#define PIN_SDA         (8u)
+#define PIN_SCL         (9u)
+
+// Serial // ESP Wifi
+#define PIN_ESP_TX      (8u)
+#define PIN_ESP_RX      (9u)

@@ -20,8 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef tnc2_packet_h_
-#define tnc2_packet_h_
+#pragma once
 
 #include <Arduino.h>
 #include <aprs/Packet.h>
@@ -50,5 +49,3 @@ namespace tnc2 {
         virtual size_t printTo(Print& p) const;
     };
 }
-
-#endif

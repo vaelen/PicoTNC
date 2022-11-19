@@ -20,6 +20,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
+#include <config.h>
+#include <network.h>
 
-#include <tnc2/Packet.h>
+void printLinkStatus() {
+    if (isEthEnabled()) {
+        printEthLinkStatus();
+    }
+}
+
+bool networkConnected() {
+    return ethConnected() || wifiConnected();
+}
+
+void updateNetwork() {
+    updateWifi();
+}

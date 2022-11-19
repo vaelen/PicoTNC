@@ -20,10 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef aprs_h_
-#define aprs_h_
+#pragma once
 
 #include <aprs/Packet.h>
 #include <aprs/Data.h>
-
-#endif

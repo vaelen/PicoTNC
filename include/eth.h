@@ -22,4 +22,10 @@ SOFTWARE.
 
 #pragma once
 
-#include <tnc2/Packet.h>
+#include <stdint.h>
+
+void initEth();
+void beginEth();
+void printEthLinkStatus();
+bool ethConnected();
+void updateEth();

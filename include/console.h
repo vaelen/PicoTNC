@@ -22,4 +22,8 @@ SOFTWARE.
 
 #pragma once
 
-#include <tnc2/Packet.h>
+#include <SerialPIO.h>
+
+extern SerialPIO console;
+
+void initConsole();

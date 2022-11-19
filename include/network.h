@@ -22,4 +22,9 @@ SOFTWARE.
 
 #pragma once
 
-#include <tnc2/Packet.h>
+#include <eth.h>
+#include <wifi.h>
+
+void printLinkStatus();
+bool networkConnected();
+void updateNetwork();

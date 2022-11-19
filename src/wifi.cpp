@@ -20,6 +20,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
+/*
+// Defines where Wifi config is stored in the EEPROM
+#define EEPROM_START            0
+// Change this to true to ask for custom parameters during Wifi config
+#define USE_DYNAMIC_PARAMETERS  false
+// Scan for wifi networks
+#define SCAN_WIFI_NETWORKS      true
+// Use the builtin LED for showing wifi status
+#define USING_CONFIG_MODE_LED   true
+#define CONFIG_MODE_LED         LED_BUILTIN
+#define HOST_NAME "PicoTNC"
+*/
 
-#include <tnc2/Packet.h>
+#include <wifi.h>
+//#include <ESP_AT_Lib.h>
+#include <console.h>
+
+SerialUART espSerial(uart1, PIN_ESP_TX, PIN_ESP_RX);
+//ESP8266 wifi(&espSerial);
+
+void initWifi() {
+    if (!isWifiEnabled()) return;
+    espSerial.begin(115200);
+    while(!espSerial);
+}
+
+void updateWifi() {
+    if (!isWifiEnabled()) return;
+}
+
+bool wifiConnected() {
+    if (!isWifiEnabled()) return false;
+    return false;
+}

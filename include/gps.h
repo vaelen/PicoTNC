@@ -1,4 +1,3 @@
-
 /*
 Copyright (c) 2022 Andrew C. Young (JJ1OKA / NU8W)
 
@@ -21,35 +20,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef APRS_IS_h_
-#define APRS_IS_h_
+#pragma once
 
-#include <Arduino.h>
-#include <NetworkClient.h>
+#include <TinyGPS++.h>
 
-class APRS_IS {
-public:
-	APRS_IS(const String &callsign, const String &passcode, const String &tool_name, const String &version);
+extern TinyGPSPlus gps;
 
-	bool connect(const String &server, const int port);
-	bool connect(const String &server, const int port, const String &filter);
-	bool connected();
-
-	bool sendMessage(const String &message);
-
-	int available();
-
-	String getMessage();
-
-private:
-	const String callsign;
-	const String passcode;
-	const String tool_name;
-	const String version;
-	NetworkClient client;
-
-	bool _connect(const String & server, const int port, const String & login_line);
-};
-
-#endif
-
+void initGPS();
+void updateGPS();
+void printGPSInfo();

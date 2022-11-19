@@ -20,8 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef aprs_data_h_
-#define aprs_data_h_
+#pragma once
 
 #include <Arduino.h>
 
@@ -86,5 +85,3 @@ namespace aprs {
         virtual size_t printTo(Print& p) const;
     };
 }
-
-#endif
