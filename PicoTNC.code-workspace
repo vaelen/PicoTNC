@@ -14,7 +14,8 @@
 			"string_view": "cpp",
 			"initializer_list": "cpp",
 			"ranges": "cpp",
-			"cstddef": "cpp"
+			"cstddef": "cpp",
+			"console.h": "c"
 		}
 	}
 }

@@ -23,8 +23,8 @@ SOFTWARE.
 #include <pins.h>
 #include <console.h>
 
-SerialPIO console(PIN_CONSOLE_TX, PIN_CONSOLE_RX);
+SerialPIO console(PIN_CONSOLE_TX, PIN_CONSOLE_RX, 1024u);
 
 void initConsole() {
-    console.begin(38400); // Console
+    console.begin(9600); // Console
 }

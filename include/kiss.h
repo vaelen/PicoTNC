@@ -22,8 +22,4 @@ SOFTWARE.
 
 #pragma once
 
-#include <SerialUART.h>
-
-extern SerialPIO console;
-
-void initConsole();
+#include <kiss/Packet.h>

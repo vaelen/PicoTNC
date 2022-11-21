@@ -30,8 +30,8 @@ SOFTWARE.
 #define PIN_GPS_RX      (1u)
 
 // Serial / KISS
-#define PIN_KISS_TX     (0u)
-#define PIN_KISS_RX     (1u)
+#define PIN_KISS_TX     (4u)
+#define PIN_KISS_RX     (5u)
 
 // Serial / Console
 #define PIN_CONSOLE_TX  (2u)
