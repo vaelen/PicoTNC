@@ -30,18 +30,20 @@ namespace kiss {
         return encoded;
     }
 
-    String decodeData(const String &data, int beginIndex = 0, int endIndex = -1) {
+    String decodeData(const String &data, int beginIndex, int endIndex) {
         if (endIndex < 0) {
             endIndex = data.length();
         }
         String decoded = data.substring(beginIndex, endIndex);
+        return decoded;
+        
         decoded.replace(KISS_ESCAPE_FEND, KISS_FRAME_END);
         decoded.replace(KISS_ESCAPE_FESC, KISS_FRAME_ESCAPE);
         return decoded;
     }
 
     byte encodeCommand(Command command, byte port) {
-        return port << 4 | command;
+        return (port << 4) | command;
     }
 
     Packet::Packet(const String &s): command(DataFrame), port(0), data("") {
@@ -72,6 +74,20 @@ namespace kiss {
 
     String Packet::encode() const {
         return KISS_FRAME_END + encodeCommand(command, port) + encodeData(data) + KISS_FRAME_END;
+    }
+
+    String Packet::commandName() const {
+        switch (command) {
+            case DataFrame: return "Data Frame"; break;
+            case TXDelay: return "TX Delay"; break;
+            case Persistence: return "Persistence"; break;
+            case SlotTime: return "Slot Time"; break;
+            case TXTail: return "TX Tail"; break;
+            case FullDuplex: return "Full Duplex"; break;
+            case SetHardware: return "Set Hardware"; break;
+            case Return: return "Exit KISS Mode"; break;
+            default: return "Unknown"; break;
+        }
     }
 
     size_t Packet::printTo(Print& p) const {

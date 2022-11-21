@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#ifndef PIO_UNIT_TESTING
+
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -33,6 +35,8 @@ SOFTWARE.
 
 #include <APRS_IS.h>
 #include <tnc2.h>
+
+#include <kiss.h>
 
 APRS_IS client(APRS_IS_USER, APRS_IS_PASSCODE, APRS_IS_TOOL_NAME, APRS_IS_TOOL_VERSION);
 
@@ -163,3 +167,5 @@ void loop() {
 // void loop1() {
 //   if (tncSerial) checkTNC();
 // }
+
+#endif // PIO_UNIT_TESTING

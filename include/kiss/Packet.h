@@ -39,13 +39,13 @@ namespace kiss {
         TXTail = 4,
         FullDuplex = 5,
         SetHardware = 6,
-        Return = 0,
+        Return = 127,
     };
 
     String encodeData(const String &data);
     String decodeData(const String &data, int beginIndex = 0, int endIndex = -1);
 
-    byte encodeCommand(Command command, byte port);
+    byte encodeCommand(Command command, byte port = 0);
 
     class Packet : public Printable {
         public:
