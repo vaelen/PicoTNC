@@ -15,7 +15,10 @@
 			"initializer_list": "cpp",
 			"ranges": "cpp",
 			"cstddef": "cpp",
-			"console.h": "c"
+			"console.h": "c",
+			"*.tcc": "cpp",
+			"functional": "cpp",
+			"new": "cpp"
 		}
 	}
 }

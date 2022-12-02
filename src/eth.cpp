@@ -25,7 +25,7 @@ SOFTWARE.
 
 #include <pins.h>
 #include <console.h>
-#include <config.h>
+#include <ansi.h>
 
 #include <api/Compat.h>
 #include <Ethernet_Generic.h>
@@ -54,13 +54,13 @@ void initEth() {
 
 void beginEth() {
   if (!isEthEnabled()) return;
-  console.print("Obtaining IP Address.. ");
+  console.print(F("Obtaining IP Address.. "));
   int ethStatus = Ethernet.begin(mac);
-  console.println(ethStatus == 1 ? " Done." : "Failed.");
+  console.print(ethStatus == 1 ? F(" Done.\n") : F("Failed.\n"));
   if (ethStatus == 0) {
-      console.print("Using Default IP Address.. ");
+      console.print(F("Using Default IP Address.. "));
       Ethernet.begin(mac, ip);
-      console.println(" Done.");
+      console.print(F(" Done.\n"));
   }
 }
 
@@ -70,27 +70,17 @@ bool ethConnected() {
 }
 
 void printEthLinkStatus() {
-  console.print("Ethernet: ");
+  char buf[20];
 
   if (isEthEnabled()) {
-    switch (Ethernet.hardwareStatus()) {
-      case EthernetNoHardware: console.print("None"); break;
-      case EthernetW5100: console.print("W5100"); break;
-      case EthernetW5200: console.print("W5200"); break;
-      default: console.print("W5500"); break;
-    }
-
-    console.print(", Link: ");
-    switch (Ethernet.linkStatus()) {
-      case LINK_ON: console.print("On"); break;
-      case LINK_OFF: console.print("Off"); break;
-      default: console.print("Unknown"); break;
-    }
-
-    console.print(", IP: ");
-    console.println(Ethernet.localIP());
+    sprintf(buf, "%3d.%3d.%3d.%3d", Ethernet.localIP()[0], Ethernet.localIP()[1], Ethernet.localIP()[2], Ethernet.localIP()[3]);
+    console.setLinkStatus(buf);
   } else {
-    console.println("Disabled");
+    char *b = buf;
+    strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
+    b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
+    strcpy_P(b, (const char *) F("NETWORK DISABLED"));
+    console.setLinkStatus(buf);
   }
 }
 

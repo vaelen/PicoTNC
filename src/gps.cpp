@@ -24,6 +24,7 @@ SOFTWARE.
 #include <config.h>
 #include <gps.h>
 #include <console.h>
+#include <ansi.h>
 
 #include <SerialUART.h>
 
@@ -38,57 +39,56 @@ void initGPS() {
 void updateGPS() {
     if (!isGPSEnabled()) return;
     // Update GPS
-    while (gpsSerial.available()) {
-        int c = gpsSerial.read();
-        gps.encode(c);
+    if (gpsSerial.available()) {
+        while (gpsSerial.available()) {
+            int c = gpsSerial.read();
+            gps.encode(c);
+        }
     }
 }
 
 void printGPSInfo() {
-    console.print(F("GPS Status: "));
-    if (isGPSEnabled()) {
-        console.print(F("Satellites: "));
-        console.print(gps.satellites.value());
-        console.print(F("  "));
-        console.print(F("Location: ")); 
-        if (gps.location.isValid()) {
-            console.print(gps.location.lat(), 6);
-            console.print(F(","));
-            console.print(gps.location.lng(), 6);
-        } else {
-            console.print(F("INVALID"));
-        }
-
-        console.print(F("  Date/Time: "));
-        if (gps.date.isValid()) {
-            console.print(gps.date.month());
-            console.print(F("/"));
-            console.print(gps.date.day());
-            console.print(F("/"));
-            console.print(gps.date.year());
-        } else {
-            console.print(F("INVALID"));
-        }
-
-        console.print(F(" "));
-        if (gps.time.isValid()) {
-            if (gps.time.hour() < 10) console.print(F("0"));
-            console.print(gps.time.hour());
-            console.print(F(":"));
-            if (gps.time.minute() < 10) console.print(F("0"));
-            console.print(gps.time.minute());
-            console.print(F(":"));
-            if (gps.time.second() < 10) console.print(F("0"));
-            console.print(gps.time.second());
-            console.print(F("."));
-            if (gps.time.centisecond() < 10) console.print(F("0"));
-            console.print(gps.time.centisecond());
-        } else {
-            console.print(F("INVALID"));
-        }
-    } else {
-        console.print(F("Disabled"));
+    char buf[60];
+    for (int i = 0; i < 60; i++) {
+        buf[i] = 0;
     }
 
-    console.println();
+    if (!isGPSEnabled()) {
+        sprintf(buf, "%3d", 0);
+        console.setSatellites(buf);
+
+        char *b = buf;
+        strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
+        b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
+        strcpy_P(b, (const char *) F("GPS DISABLED"));
+        console.setLocation(buf);
+        console.setTime(buf);
+    } else {
+        sprintf(buf, "%3d", gps.satellites.value());
+        console.setSatellites(buf);
+
+        if (gps.location.isValid()) {
+            sprintf(buf, "%3.60f,%3.60f", gps.location.lat(), gps.location.lng());
+            console.setLocation(buf);
+        } else {
+            char *b = buf;
+            strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
+            b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
+            strcpy_P(b, (const char *) F("INVALID"));
+            console.setLocation(buf);
+        }
+
+        if (gps.date.isValid()) {
+            sprintf(buf, "%02d/%02d/%04d %02d:%02d:%02d.%03d", 
+                gps.date.month(), gps.date.day(), gps.date.year(),
+                gps.time.hour(), gps.time.minute(), gps.time.second(), gps.time.centisecond());
+            console.setTime(buf);
+        } else {
+            char *b = buf;
+            strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
+            b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
+            strcpy_P(b, (const char *) F("INVALID"));
+            console.setTime(buf);
+        }
+    }
 }

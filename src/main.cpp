@@ -38,9 +38,11 @@ SOFTWARE.
 
 #include <kiss.h>
 
+#include <ansi.h>
+
 APRS_IS client(APRS_IS_USER, APRS_IS_PASSCODE, APRS_IS_TOOL_NAME, APRS_IS_TOOL_VERSION);
 
-SerialPIO tncSerial(PIN_KISS_TX,PIN_KISS_RX, 256u);
+SerialPIO tncSerial(PIN_KISS_TX,PIN_KISS_RX, 1024u);
 
 void initTNC() {
   tncSerial.begin(38400); // KISS TNC
@@ -50,51 +52,57 @@ void checkTNC() {
   if (!tncSerial) return;
   // Check TNC
   if (tncSerial.available() > 0) {
-    console.print("KISS: ");
+    console.print(F("KISS: "));
     while (tncSerial.available()) {
       int c = tncSerial.read();
       if (c < 0x20 || c > 0x7e ) {
-        console.print("<0x");
+        console.print(F("<0x"));
         if (c < 16) {
           console.print("0");
         }
         console.print(c, 16);
-        console.print(">");
+        console.print(F(">"));
       } else {
         console.print((char)c);
       }
     }
-    console.print("\r\n");
+    console.print(F("\r\n"));
   }
 }
 
+SerialUART consoleUART(uart1, PIN_CONSOLE_TX, PIN_CONSOLE_RX);
+
 void setup() {
-  initConsole();
+  
+  consoleUART.begin(115200);
+
   initGPS();
   initTNC();
 
   delay(3000);
 
-  console.println("Starting...");
+  console.begin(consoleUART);
+
+  console.println(F("Starting..."));
 
   if (isI2CEnabled()) {
-    console.print("Initializing I2C.. ");
+    console.print(F("Initializing I2C.. "));
     Wire.setSDA(PIN_SDA);
     Wire.setSCL(PIN_SCL);
     Wire.begin();
-    console.println(" Done.");
+    console.println(F(" Done."));
   }
 
   if (isEthEnabled()) {
-    console.print("Initializing Ethernet.. ");
+    console.print(F("Initializing Ethernet.. "));
     initEth();
-    console.println(" Done.");
+    console.println(F(" Done."));
   }
 
   if (isWifiEnabled()) {
-    console.print("Initializing Wifi.. ");
+    console.print(F("Initializing Wifi.. "));
     initWifi();
-    console.println(" Done.");
+    console.println(F(" Done."));
   }
 
   // console.print("Starting NTP Client.. ");
@@ -102,6 +110,7 @@ void setup() {
   // console.println(" Done.");
 
   console.println("Ready");
+
 }
 
 unsigned long lastMillis = 0;
@@ -115,18 +124,15 @@ void loop() {
     updateGPS();
   }
 
-  // Display debug info
-  unsigned long m = millis();
-  if (DEBUG_INTERVAL_MS > 0 && m % DEBUG_INTERVAL_MS == 0 && m != lastMillis) {
-    // console.print("\xde\xad\xbe\xef\xde\xad\xbe\xef");
-    if (isGPSEnabled() && debugGPS()) {
-      printGPSInfo();
-    }
-    if (isEthEnabled() && debugEth()) {
-      printLinkStatus();
-    }
-    lastMillis = m;
+  // Update console data
+  unsigned long delta = millis() - lastMillis;
+  if (delta >= 1000) {
+    printGPSInfo();
+    printLinkStatus();
+    lastMillis = millis();
   }
+
+  console.update();
 
   updateNetwork();
 
@@ -136,9 +142,17 @@ void loop() {
       Ethernet.maintain();
       // Check for APRS-IS connection
       if (!client.connected()) {
-        console.print("Starting APRS-IS Client.. ");
+        console.print(F("Starting APRS-IS Client.. "));
         bool connected = client.connect(APRS_IS_SERVER, APRS_IS_PORT, APRS_IS_FILTER);
-        console.println(connected ? " Done." : "Failed.");
+        if (connected) {
+          console.print(ANSI::FG::BRIGHT::GREEN);
+          console.println(F("Done."));
+        } else  {
+          console.print(ANSI::FG::BRIGHT::RED);
+          console.println(F("Failed."));
+        }
+        console.print(ANSI::FG::WHITE);
+        
       } else {
         // Network and APRS-IS client connected
         if (client.connected() && client.available()) {

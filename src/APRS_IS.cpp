@@ -40,7 +40,11 @@ bool APRS_IS::connect(const String &server, const int port, const String &filter
 bool APRS_IS::_connect(const String &server, const int port, const String &login) {
 	if(!client.connect(server.c_str(), port))
 	{
-		console.printf("Could not connect to APRS-IS Server: %s:%d\n", server.c_str(), port);
+		console.print(F("Could not connect to APRS-IS Server: "));
+		console.print(server.c_str());
+		console.print(F(":"));
+		console.print(port);
+		console.print('\n');
 		return false;
 	}
 	sendMessage(login);
@@ -55,7 +59,11 @@ bool APRS_IS::_connect(const String &server, const int port, const String &login
 			}
 			else
 			{
-				console.printf("Invalid callsign or passcode. Callsign: %s, Passcode: %s\n", callsign.c_str(), passcode.c_str());
+				console.print(F("Invalid callsign or passcode. Callsign: "));
+				console.print(callsign.c_str());
+				console.print(F(", Passcode: "));
+				console.print(passcode.c_str());
+				console.print('\n');
 				return false;
 			}
 		}

@@ -24,8 +24,6 @@ SOFTWARE.
 
 #include <Arduino.h>
 
-const int DEBUG_INTERVAL_MS = 3000;
-
 const String APRS_IS_USER = "JJ1OKA"; 
 const String APRS_IS_PASSCODE = "17318"; 
 const String APRS_IS_TOOL_NAME = "NanoTNC";
@@ -34,13 +32,7 @@ const String APRS_IS_SERVER = "asia.aprs2.net";
 const int APRS_IS_PORT = 14580; 
 const String APRS_IS_FILTER = "m/5 o/JJ1OKA* g/JJ1OKA* b/JJ1OKA*"; 
 
-bool debugGPS();
 bool isGPSEnabled();
-
-bool debugEth();
 bool isEthEnabled();
-
-bool debugWifi();
 bool isWifiEnabled();
-
 bool isI2CEnabled();

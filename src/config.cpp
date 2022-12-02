@@ -22,13 +22,7 @@ SOFTWARE.
 
 #include <config.h>
 
-bool debugGPS() { return false; }
-bool isGPSEnabled() { return false; }
-
-bool debugEth() { return false; }
-bool isEthEnabled() { return false; }
-
-bool debugWifi() { return false; }
+bool isGPSEnabled() { return true; }
+bool isEthEnabled() { return true; }
 bool isWifiEnabled() { return false; }
-
 bool isI2CEnabled() { return false; }
