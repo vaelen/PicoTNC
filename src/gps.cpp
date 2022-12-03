@@ -47,48 +47,55 @@ void updateGPS() {
     }
 }
 
-void printGPSInfo() {
+String gpsTime() {
     char buf[60];
-    for (int i = 0; i < 60; i++) {
-        buf[i] = 0;
-    }
-
+    buf[0] = 0;
     if (!isGPSEnabled()) {
-        sprintf(buf, "%3d", 0);
-        console.setSatellites(buf);
-
         char *b = buf;
         strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
         b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
-        strcpy_P(b, (const char *) F("GPS DISABLED"));
-        console.setLocation(buf);
-        console.setTime(buf);
+        strcpy_P(b, (const char *) F("DISABLED"));
+        b += strlen_P((const char *) F("DISABLED"));
+        strcpy_P(b, (const char *) ANSI::RESET);
+    } else if (gps.date.isValid()) {
+        sprintf(buf, "%02d/%02d/%04d %02d:%02d:%02d.%03d", 
+            gps.date.month(), gps.date.day(), gps.date.year(),
+            gps.time.hour(), gps.time.minute(), gps.time.second(), gps.time.centisecond());       
     } else {
-        sprintf(buf, "%3d", gps.satellites.value());
-        console.setSatellites(buf);
-
-        if (gps.location.isValid()) {
-            sprintf(buf, "%3.60f,%3.60f", gps.location.lat(), gps.location.lng());
-            console.setLocation(buf);
-        } else {
-            char *b = buf;
-            strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
-            b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
-            strcpy_P(b, (const char *) F("INVALID"));
-            console.setLocation(buf);
-        }
-
-        if (gps.date.isValid()) {
-            sprintf(buf, "%02d/%02d/%04d %02d:%02d:%02d.%03d", 
-                gps.date.month(), gps.date.day(), gps.date.year(),
-                gps.time.hour(), gps.time.minute(), gps.time.second(), gps.time.centisecond());
-            console.setTime(buf);
-        } else {
-            char *b = buf;
-            strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
-            b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
-            strcpy_P(b, (const char *) F("INVALID"));
-            console.setTime(buf);
-        }
+        char *b = buf;
+        strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
+        b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
+        strcpy_P(b, (const char *) F("INVALID"));
+        b += strlen_P((const char *) F("INVALID"));
+        strcpy_P(b, (const char *) ANSI::RESET);
     }
+    return String(buf);
+}
+
+int gpsSatellites() {
+    if (!isGPSEnabled()) return 0;
+    return gps.satellites.value();
+}
+
+String gpsLocation() {
+    char buf[60];
+    buf[0] = 0;
+    if (!isGPSEnabled()) {
+        char *b = buf;
+        strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
+        b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
+        strcpy_P(b, (const char *) F("DISABLED"));
+        b += strlen_P((const char *) F("DISABLED"));
+        strcpy_P(b, (const char *) ANSI::RESET);
+    } else if (gps.location.isValid()) {
+            sprintf(buf, "%3.6f,%3.6f", gps.location.lat(), gps.location.lng());      
+    } else {
+        char *b = buf;
+        strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
+        b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
+        strcpy_P(b, (const char *) F("INVALID"));
+        b += strlen_P((const char *) F("INVALID"));
+        strcpy_P(b, (const char *) ANSI::RESET);
+    }
+    return String(buf);
 }

@@ -28,4 +28,6 @@ extern TinyGPSPlus gps;
 
 void initGPS();
 void updateGPS();
-void printGPSInfo();
+String gpsLocation();
+int gpsSatellites();
+String gpsTime();

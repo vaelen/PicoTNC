@@ -124,16 +124,10 @@ void loop() {
     updateGPS();
   }
 
-  // Update console data
-  unsigned long delta = millis() - lastMillis;
-  if (delta >= 1000) {
-    printGPSInfo();
-    printLinkStatus();
-    lastMillis = millis();
-  }
-
+  // Update console
   console.update();
 
+  // Update network
   updateNetwork();
 
   // Check for network connection
@@ -151,7 +145,7 @@ void loop() {
           console.print(ANSI::FG::BRIGHT::RED);
           console.println(F("Failed."));
         }
-        console.print(ANSI::FG::WHITE);
+        console.print(ANSI::RESET);
         
       } else {
         // Network and APRS-IS client connected
@@ -169,7 +163,6 @@ void loop() {
       }
     } else {
       beginEth();
-      printLinkStatus();
     }
   }
 }

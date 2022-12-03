@@ -23,10 +23,11 @@ SOFTWARE.
 #include <config.h>
 #include <network.h>
 
-void printLinkStatus() {
+String ipAddress() {
     if (isEthEnabled()) {
-        printEthLinkStatus();
+        return ethIPAddress();
     }
+    return "";
 }
 
 bool networkConnected() {

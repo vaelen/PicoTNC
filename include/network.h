@@ -25,6 +25,6 @@ SOFTWARE.
 #include <eth.h>
 #include <wifi.h>
 
-void printLinkStatus();
+String ipAddress();
 bool networkConnected();
 void updateNetwork();

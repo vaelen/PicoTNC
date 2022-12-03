@@ -36,19 +36,6 @@ class Console: public Print {
         void begin(Stream &stream);
         void update();
 
-        // Rows
-        uint8_t rows();
-        void rows(uint8_t r);
-
-        // Columns
-        uint8_t columns();
-        void columns(uint8_t c);
-
-        void setTime(const char *time);
-        void setSatellites(const char *satellites);
-        void setLocation(const char *location);
-        void setLinkStatus(const char *linkStatus);
-
         // Print implementation
         virtual size_t write(uint8_t);
         virtual size_t write(const uint8_t *buffer, size_t size);
@@ -57,24 +44,6 @@ class Console: public Print {
 
     protected:
         Stream *stream;
-        uint8_t _rows;
-        uint8_t _columns;
-        uint32_t _lastRefresh;
-        char *_time;
-        char * _satellites;
-        char *_location;
-        char *_linkStatus;
-
-        // Screen drawing methods
-        void refreshScreen();
-        void updateSatellites();
-        void updateLocation();
-        void updateTime();
-        void updateLinkStatus();
-        void setBorderAttributes();
-        void setLogAttributes();
-        void setGPSAttributes();
-        void setLinkAttributes();
 };
 
 extern Console console;

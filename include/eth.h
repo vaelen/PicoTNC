@@ -27,5 +27,6 @@ SOFTWARE.
 void initEth();
 void beginEth();
 void printEthLinkStatus();
+String ethIPAddress();
 bool ethConnected();
 void updateEth();

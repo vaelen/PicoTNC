@@ -69,19 +69,18 @@ bool ethConnected() {
   return Ethernet.localIP() != IPAddress(emptyIP);
 }
 
-void printEthLinkStatus() {
-  char buf[20];
-
+String ethIPAddress() {
+  char buf[40];
+  buf[0] = 0;
   if (isEthEnabled()) {
     sprintf(buf, "%3d.%3d.%3d.%3d", Ethernet.localIP()[0], Ethernet.localIP()[1], Ethernet.localIP()[2], Ethernet.localIP()[3]);
-    console.setLinkStatus(buf);
   } else {
     char *b = buf;
     strcpy_P(b, (const char *) ANSI::FG::BRIGHT::RED);
     b += strlen_P((const char *) ANSI::FG::BRIGHT::RED);
-    strcpy_P(b, (const char *) F("NETWORK DISABLED"));
-    console.setLinkStatus(buf);
+    strcpy_P(b, (const char *) F("DISABLED"));
   }
+  return String(buf);
 }
 
 void updateEth() {
