@@ -22,28 +22,17 @@ SOFTWARE.
 
 #pragma once
 
-#include <api/String.h>
-#include <api/Print.h>
-#include <api/Stream.h>
 #include <stdint.h>
+#include <microshell.h>
+
+void initShell();
+void updateShell();
 
 class Console: public Print {
-    public:
-        Console();
-        ~Console();
-
-        // Lifecycle methods
-        void begin(Stream &stream);
-        void update();
-
-        // Print implementation
-        virtual size_t write(uint8_t);
-        virtual size_t write(const uint8_t *buffer, size_t size);
-        virtual int availableForWrite();
-        virtual void flush();
-
-    protected:
-        Stream *stream;
+    virtual size_t write(uint8_t c);
+    virtual size_t write(const uint8_t *buffer, size_t size);
+    virtual void flush();
 };
 
 extern Console console;
+extern struct ush_object ush;

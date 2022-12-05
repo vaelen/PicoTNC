@@ -44,7 +44,7 @@ bool APRS_IS::_connect(const String &server, const int port, const String &login
 		console.print(server.c_str());
 		console.print(F(":"));
 		console.print(port);
-		console.print('\n');
+		console.println("");
 		return false;
 	}
 	sendMessage(login);
@@ -63,7 +63,7 @@ bool APRS_IS::_connect(const String &server, const int port, const String &login
 				console.print(callsign.c_str());
 				console.print(F(", Passcode: "));
 				console.print(passcode.c_str());
-				console.print('\n');
+				console.println("");
 				return false;
 			}
 		}

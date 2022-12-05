@@ -21,43 +21,88 @@ SOFTWARE.
 */
 
 #include <Arduino.h>
+#include <pins.h>
 #include <console.h>
 #include <ansi.h>
 
+SerialUART shellUART(uart1, PIN_CONSOLE_TX, PIN_CONSOLE_RX);
 Console console;
+struct ush_object ush;
 
-Console::Console(): Print(), stream(NULL) {}
-Console::~Console() {}
+// working buffers allocations (size could be customized)
+#define BUF_IN_SIZE    32
+#define BUF_OUT_SIZE   32
+#define PATH_MAX_SIZE  32
 
-// Lifecycle Methods
+static char ush_in_buf[BUF_IN_SIZE];
+static char ush_out_buf[BUF_OUT_SIZE];
 
-void Console::begin(Stream &s) {
-    stream = &s;
-    stream->print(ANSI::CLEAR_SCREEN);
+// root directory handler
+static struct ush_node_object root;
+
+// non-blocking read interface
+static int ush_read(struct ush_object *self, char *ch)
+{
+    // should be implemented as a FIFO
+    if (shellUART.available() > 0) {
+        *ch = shellUART.read();
+        return 1;
+    }
+    return 0;
 }
 
-void Console::update() {
-    if (stream == NULL) return;
+// non-blocking write interface
+static int ush_write(struct ush_object *self, char ch)
+{
+    // should be implemented as a FIFO
+    return (shellUART.write(ch) == 1);
 }
 
-// Print Implementation
+// I/O interface descriptor
+static const struct ush_io_interface ush_iface = {
+    .read = ush_read,
+    .write = ush_write,
+};
 
-size_t Console::write(uint8_t b) {
-    if (stream == NULL) return 0;
-    return stream->write(b);
+// microshell descriptor
+static const struct ush_descriptor ush_desc = {
+    .io = &ush_iface,                           // I/O interface pointer
+    .input_buffer = ush_in_buf,                 // working input buffer
+    .input_buffer_size = sizeof(ush_in_buf),    // working input buffer size
+    .output_buffer = ush_out_buf,               // working output buffer
+    .output_buffer_size = sizeof(ush_out_buf),  // working output buffer size
+    .path_max_length = PATH_MAX_SIZE,           // path maximum length (stack)
+    .hostname = const_cast<char *>("PicoTNC"),  // hostname (in prompt)
+};
+
+void initShell() {
+    // initialize I/O interface
+    shellUART.begin(115200UL);
+    
+    // initialize microshell instance
+    ush_init(&ush, &ush_desc);
+
+    // mount root directory (root must be first)
+    ush_node_mount(&ush, "/", &root, NULL, 0);
+}
+
+void updateShell() {
+    // non-blocking microshell service
+    ush_service(&ush);
+}
+
+size_t Console::write(uint8_t c) {
+    return ush_write(&ush, c);
 }
 
 size_t Console::write(const uint8_t *buffer, size_t size) {
-    if (stream == NULL) return 0;
-    return stream->write(buffer, size);
-}
-
-int Console::availableForWrite() {
-    if (stream == NULL) return 0;
-    return stream->availableForWrite();
+    if (buffer == NULL) return 0;
+    for (size_t i = 0; i < size; i++ ) {
+        ush_write(&ush, buffer[i]);
+    }
+    return size;
 }
 
 void Console::flush() {
-    if (stream == NULL) return;
-    stream->flush();
+    ush_flush(&ush);
 }

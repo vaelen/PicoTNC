@@ -56,11 +56,11 @@ void beginEth() {
   if (!isEthEnabled()) return;
   console.print(F("Obtaining IP Address.. "));
   int ethStatus = Ethernet.begin(mac);
-  console.print(ethStatus == 1 ? F(" Done.\n") : F("Failed.\n"));
+  console.println(ethStatus == 1 ? F(" Done.") : F("Failed."));
   if (ethStatus == 0) {
       console.print(F("Using Default IP Address.. "));
       Ethernet.begin(mac, ip);
-      console.print(F(" Done.\n"));
+      console.println(F(" Done."));
   }
 }
 

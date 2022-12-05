@@ -66,22 +66,19 @@ void checkTNC() {
         console.print((char)c);
       }
     }
-    console.print(F("\r\n"));
+    console.println("");
   }
 }
 
-SerialUART consoleUART(uart1, PIN_CONSOLE_TX, PIN_CONSOLE_RX);
+
 
 void setup() {
   
-  consoleUART.begin(115200);
-
+  initShell();
   initGPS();
   initTNC();
 
-  delay(3000);
-
-  console.begin(consoleUART);
+  delay(1000);
 
   console.println(F("Starting..."));
 
@@ -125,7 +122,7 @@ void loop() {
   }
 
   // Update console
-  console.update();
+  updateShell();
 
   // Update network
   updateNetwork();
